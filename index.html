@@ -394,15 +394,15 @@
             border-radius: 0.75rem;
         }
 
-        .page-marker,
-        #content h2[id] {
-            scroll-margin-top: 14rem;
-        }
-
         .page-marker {
             width: 100%;
             height: 1px;
             margin: 0;
+            scroll-margin-top: 0;
+        }
+
+        #content h2[id] {
+            scroll-margin-top: 14rem;
         }
 
         @media (max-width: 960px) {
@@ -595,6 +595,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
             const ui = {
                 content: document.getElementById('content'),
                 toolbar: document.getElementById('readerToolbar'),
+                bookSurface: document.querySelector('.book-surface'),
                 chapterNav: document.getElementById('chapterNav'),
                 prevPage: document.getElementById('prevPage'),
                 nextPage: document.getElementById('nextPage'),
@@ -710,13 +711,13 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 }
             });
 
-            window.addEventListener('scroll', function() {
+            ui.bookSurface.addEventListener('scroll', function() {
                 if (state.scrollRaf) {
                     return;
                 }
                 state.scrollRaf = window.requestAnimationFrame(function() {
                     state.scrollRaf = null;
-                    const scrollPage = pageFromScroll(state.pages, ui.toolbar);
+                    const scrollPage = pageFromScroll(state.pages, ui.bookSurface);
                     if (scrollPage !== state.currentPage) {
                         setCurrentPage(scrollPage, false);
                     }
@@ -957,9 +958,12 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 if (!page) {
                     return;
                 }
-                page.marker.scrollIntoView({
-                    behavior: smooth ? 'smooth' : 'auto',
-                    block: 'start'
+                const surfaceRect = ui.bookSurface.getBoundingClientRect();
+                const markerRect = page.marker.getBoundingClientRect();
+                const targetTop = ui.bookSurface.scrollTop + (markerRect.top - surfaceRect.top);
+                ui.bookSurface.scrollTo({
+                    top: Math.max(0, targetTop),
+                    behavior: smooth ? 'smooth' : 'auto'
                 });
             }
 
@@ -1003,6 +1007,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                         activeButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 }
+                state.suppressChapterAutoScroll = false;
             }
 
             function syncAudioToPage() {
@@ -1090,15 +1095,33 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
             }
         }
 
-        function pageFromScroll(pages, toolbar) {
-            const offset = window.scrollY + toolbar.getBoundingClientRect().height + 28;
-            let current = 1;
+        function pageFromScroll(pages, bookSurface) {
+            const surfaceRect = bookSurface.getBoundingClientRect();
+            const viewportTop = surfaceRect.top;
+            const viewportBottom = surfaceRect.bottom;
+            let current = pages[0] ? pages[0].number : 1;
+
             pages.forEach(function(page) {
-                if (page.marker.offsetTop <= offset) {
+                const markerRect = page.marker.getBoundingClientRect();
+                if (markerRect.top <= viewportTop + 1) {
                     current = page.number;
                 }
             });
-            return current;
+
+            if (bookSurface.scrollTop <= 1) {
+                return pages[0] ? pages[0].number : 1;
+            }
+
+            if (bookSurface.scrollTop + bookSurface.clientHeight >= bookSurface.scrollHeight - 1) {
+                return pages[pages.length - 1] ? pages[pages.length - 1].number : current;
+            }
+
+            const visiblePage = pages.find(function(page) {
+                const markerRect = page.marker.getBoundingClientRect();
+                return markerRect.bottom >= viewportTop && markerRect.top <= viewportBottom;
+            });
+
+            return visiblePage ? visiblePage.number : current;
         }
 
         function pageForBlock(blockIndex, pages) {
