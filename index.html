@@ -523,6 +523,39 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 return;
             }
             state.pages = buildPages(blocks);
+            console.log('[pagination-debug] state.pages.length:', state.pages.length);
+            console.log('[pagination-debug] allBlocks.length:', blocks.length);
+            console.log('[pagination-debug] WORDS_PER_PAGE:', WORDS_PER_PAGE);
+            console.log('[pagination-debug] first 3 blocks:', blocks.slice(0, 3).map(function(block, index) {
+                const text = (block.textContent || '').trim().replace(/\s+/g, ' ');
+                return {
+                    index: index,
+                    tagName: block.tagName,
+                    textContent: text.slice(0, 200),
+                    wordCount: countWords(text)
+                };
+            }));
+
+            const paginationDebugContainer = document.createElement('div');
+            const paginationTestBlockOne = document.createElement('p');
+            const paginationTestBlockTwo = document.createElement('p');
+            paginationTestBlockOne.textContent = 'one two three four five';
+            paginationTestBlockTwo.textContent = new Array(WORDS_PER_PAGE + 20).fill('word').join(' ');
+            paginationDebugContainer.appendChild(paginationTestBlockOne);
+            paginationDebugContainer.appendChild(paginationTestBlockTwo);
+            const paginationTestBlocks = Array.from(paginationDebugContainer.children);
+            const paginationTestPages = buildPages(paginationTestBlocks);
+            console.log('[pagination-debug] manual 2-block test:', {
+                blockCount: paginationTestBlocks.length,
+                pageCount: paginationTestPages.length,
+                pages: paginationTestPages.map(function(page) {
+                    return {
+                        number: page.number,
+                        startIndex: page.startIndex,
+                        endIndex: page.endIndex
+                    };
+                })
+            });
             state.chapters = buildChapters(blocks, state.pages);
             const audioTracks = buildAudioTrackMap(state.chapters, state.pages.length);
             const trackLookup = Object.fromEntries(audioTracks.map(function(track) {
