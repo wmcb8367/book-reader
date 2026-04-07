@@ -114,7 +114,7 @@ function buildPagesFromHtml(html) {
         if (!normalizedText && tag !== "img") {
             return;
         }
-        if (tag === "h2" && normalizedText !== "Contents") {
+        if (tag === "h2" && normalizedText !== "Contents" && normalizedText !== "2025 Edition") {
             currentChapterTitle = normalizedText;
         }
         blocks.push({
@@ -145,7 +145,11 @@ function buildPagesFromHtml(html) {
 
     blocks.forEach((block, index) => {
         const nextBlock = blocks[index + 1];
-        const startsNewChapter = block.tag === "h2" && pageBlocks.length > 0;
+        const startsNewChapter =
+            block.tag === "h2" &&
+            pageBlocks.length > 0 &&
+            pageChapter !== "Opening" &&
+            block.chapterTitle !== pageChapter;
 
         if (startsNewChapter) {
             flushPage();
@@ -155,11 +159,17 @@ function buildPagesFromHtml(html) {
         if (!pageBlocks.length) {
             pageChapter = block.chapterTitle;
         }
+        if (pageChapter === "Opening" && block.chapterTitle !== "Opening") {
+            pageChapter = block.chapterTitle;
+        }
 
         pageBlocks.push(block);
         pageWords += block.words;
 
-        const nextStartsChapter = nextBlock && nextBlock.tag === "h2";
+        const nextStartsChapter =
+            nextBlock &&
+            nextBlock.tag === "h2" &&
+            nextBlock.chapterTitle !== pageChapter;
         const isSafeBreakpoint = pageWords >= PAGE_WORD_TARGET || (pageWords >= PAGE_WORD_MIN && nextStartsChapter);
 
         if (isSafeBreakpoint) {
