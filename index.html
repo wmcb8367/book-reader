@@ -577,9 +577,21 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
         const AUDIO_TRACKS = [
             { id: 'preface', title: 'Preface', src: 'audiobook/01-preface.mp3' },
             { id: 'prologue', title: 'Prologue', src: 'audiobook/02-prologue-full.mp3' },
-            { id: 'introduction', title: 'Introduction', src: 'audiobook/03-introduction-full.mp3' },
-            { id: 'tactics', title: 'Tactics', src: 'audiobook/04-tactics-full.mp3' },
-            { id: 'conclusion', title: 'Conclusion', src: 'audiobook/05-conclusion-full.mp3' }
+            {
+                id: 'introduction-to-rcdm',
+                title: 'Introduction To Race Course Decision Making',
+                src: 'audiobook/06-introduction-to-rcdm.mp3'
+            },
+            {
+                id: 'three-building-blocks',
+                title: 'The Three Building Blocks',
+                src: 'audiobook/07-three-building-blocks.mp3'
+            },
+            {
+                id: 'building-a-process',
+                title: 'Building A Process For Learning',
+                src: 'audiobook/08-building-a-process.mp3'
+            }
         ];
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -927,12 +939,24 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
             function buildAudioTrackMap(chapters, totalPages) {
                 const prefacePage = chapterPage(chapters, 'Preface') || 1;
                 const prologuePage = chapterStartsWith(chapters, 'Prologue') || Math.min(totalPages, prefacePage + 1);
-                const introductionPage = chapterPage(chapters, 'Introduction') || (totalPages + 1);
-                const tacticsPage =
-                    chapterPage(chapters, 'III. Tactics') ||
-                    chapterPage(chapters, 'Tactics') ||
-                    (totalPages + 1);
-                const conclusionPage = chapterPage(chapters, 'Conclusion') || (totalPages + 1);
+                const introductionToRcdmPage = resolveChapterPage(
+                    chapters,
+                    'Introduction To Race Course Decision Making'
+                ) || (totalPages + 1);
+                const threeBuildingBlocksPage = resolveChapterPage(
+                    chapters,
+                    'The Three Building Blocks',
+                    true
+                ) || (totalPages + 1);
+                const buildingAProcessPage = resolveChapterPage(
+                    chapters,
+                    'Building A Process For Learning',
+                    true
+                ) || (totalPages + 1);
+                const raceCoursePhilosophyPage = resolveChapterPage(
+                    chapters,
+                    'What Is Race Course Philosophy?'
+                ) || (totalPages + 1);
                 const endPage = Math.max(1, totalPages);
 
                 return AUDIO_TRACKS.map(function(track) {
@@ -943,17 +967,19 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                         track.endPage = Math.max(prefacePage, prologuePage - 1);
                     } else if (track.id === 'prologue') {
                         track.startPage = prologuePage;
-                        track.endPage = Math.max(prologuePage, introductionPage - 1);
-                    } else if (track.id === 'introduction') {
-                        track.startPage = introductionPage;
-                        track.endPage = Math.max(introductionPage, tacticsPage - 1);
-                    } else if (track.id === 'tactics') {
-                        track.startPage = tacticsPage;
-                        track.endPage = Math.max(tacticsPage, conclusionPage - 1);
-                    } else if (track.id === 'conclusion') {
-                        track.startPage = conclusionPage;
-                        track.endPage = endPage;
+                        track.endPage = Math.max(prologuePage, introductionToRcdmPage - 1);
+                    } else if (track.id === 'introduction-to-rcdm') {
+                        track.startPage = introductionToRcdmPage;
+                        track.endPage = Math.max(introductionToRcdmPage, threeBuildingBlocksPage - 1);
+                    } else if (track.id === 'three-building-blocks') {
+                        track.startPage = threeBuildingBlocksPage;
+                        track.endPage = Math.max(threeBuildingBlocksPage, buildingAProcessPage - 1);
+                    } else if (track.id === 'building-a-process') {
+                        track.startPage = buildingAProcessPage;
+                        track.endPage = Math.max(buildingAProcessPage, raceCoursePhilosophyPage - 1);
                     }
+                    track.startPage = clampPage(track.startPage, endPage);
+                    track.endPage = clampPage(track.endPage, endPage);
                     return track;
                 });
             }
@@ -1170,6 +1196,10 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 return item.title.indexOf(prefix) === 0;
             });
             return chapter ? chapter.page : null;
+        }
+
+        function resolveChapterPage(chapters, title, allowStartsWith) {
+            return chapterPage(chapters, title) || (allowStartsWith ? chapterStartsWith(chapters, title) : null);
         }
 
         function countWords(text) {

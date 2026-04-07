@@ -137,9 +137,9 @@ function main() {
     const audioFiles = [
         "audiobook/01-preface.mp3",
         "audiobook/02-prologue-full.mp3",
-        "audiobook/03-introduction-full.mp3",
-        "audiobook/04-tactics-full.mp3",
-        "audiobook/05-conclusion-full.mp3"
+        "audiobook/06-introduction-to-rcdm.mp3",
+        "audiobook/07-three-building-blocks.mp3",
+        "audiobook/08-building-a-process.mp3"
     ];
 
     const summary = {
