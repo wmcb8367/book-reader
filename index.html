@@ -677,8 +677,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
             }
 
             const initialPage = clampPage(state.savedPage, state.pages.length);
-            setCurrentPage(initialPage, false);
-            jumpToPage(initialPage, false);
+            goToPage(initialPage, false, { forceRefresh: true });
 
             const initialTrack = findTrackForPage(audioTracks, initialPage) || trackLookup[state.savedTrackId] || audioTracks[0];
             if (initialTrack) {
@@ -818,9 +817,12 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 });
             }
 
-            function goToPage(pageNumber, smooth) {
+            function goToPage(pageNumber, smooth, options) {
                 const page = clampPage(pageNumber, state.pages.length);
-                setCurrentPage(page);
+                const forceRefresh = options && options.forceRefresh;
+                if (forceRefresh || page !== state.currentPage) {
+                    setCurrentPage(page);
+                }
                 jumpToPage(page, smooth);
             }
 
@@ -845,6 +847,14 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
 
             function updatePageUI() {
                 const total = state.pages.length;
+                if (!total) {
+                    ui.pageIndicator.textContent = 'Page 1 of 1';
+                    ui.pageSelect.value = '';
+                    ui.prevPage.disabled = true;
+                    ui.nextPage.disabled = true;
+                    ui.readerProgressBar.style.width = '100%';
+                    return;
+                }
                 ui.pageIndicator.textContent = 'Page ' + state.currentPage + ' of ' + total;
                 ui.pageSelect.value = String(state.currentPage);
                 ui.prevPage.disabled = state.currentPage <= 1;
