@@ -136,7 +136,10 @@ function main() {
     const pages = assignAudioToPages(buildPages(buildBlocks(bookHtml)));
     const audioFiles = [
         "audiobook/01-preface.mp3",
-        "audiobook/02-prologue-full.mp3"
+        "audiobook/02-prologue-full.mp3",
+        "audiobook/03-introduction-full.mp3",
+        "audiobook/04-tactics-full.mp3",
+        "audiobook/05-conclusion-full.mp3"
     ];
 
     const summary = {
@@ -153,6 +156,7 @@ function main() {
                 bytes: exists ? fs.statSync(absolutePath).size : 0
             };
         }),
+        expectedAudioFileCount: audioFiles.length,
         checks: {
             bookContentScriptIncluded: indexHtml.includes('src="book-content.js"'),
             readerScriptIncluded: indexHtml.includes('src="reader.js"'),

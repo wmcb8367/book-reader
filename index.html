@@ -576,7 +576,10 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
         const WORDS_PER_PAGE = 500;
         const AUDIO_TRACKS = [
             { id: 'preface', title: 'Preface', src: 'audiobook/01-preface.mp3' },
-            { id: 'prologue', title: 'Prologue', src: 'audiobook/02-prologue-full.mp3' }
+            { id: 'prologue', title: 'Prologue', src: 'audiobook/02-prologue-full.mp3' },
+            { id: 'introduction', title: 'Introduction', src: 'audiobook/03-introduction-full.mp3' },
+            { id: 'tactics', title: 'Tactics', src: 'audiobook/04-tactics-full.mp3' },
+            { id: 'conclusion', title: 'Conclusion', src: 'audiobook/05-conclusion-full.mp3' }
         ];
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -925,7 +928,12 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 const prefacePage = chapterPage(chapters, 'Preface') || 1;
                 const prologuePage = chapterStartsWith(chapters, 'Prologue') || Math.min(totalPages, prefacePage + 1);
                 const introductionPage = chapterPage(chapters, 'Introduction') || (totalPages + 1);
-                const prologueEnd = Math.max(prologuePage, introductionPage - 1);
+                const tacticsPage =
+                    chapterPage(chapters, 'III. Tactics') ||
+                    chapterPage(chapters, 'Tactics') ||
+                    (totalPages + 1);
+                const conclusionPage = chapterPage(chapters, 'Conclusion') || (totalPages + 1);
+                const endPage = Math.max(1, totalPages);
 
                 return AUDIO_TRACKS.map(function(track) {
                     return Object.assign({}, track);
@@ -933,9 +941,18 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                     if (track.id === 'preface') {
                         track.startPage = prefacePage;
                         track.endPage = Math.max(prefacePage, prologuePage - 1);
-                    } else {
+                    } else if (track.id === 'prologue') {
                         track.startPage = prologuePage;
-                        track.endPage = prologueEnd;
+                        track.endPage = Math.max(prologuePage, introductionPage - 1);
+                    } else if (track.id === 'introduction') {
+                        track.startPage = introductionPage;
+                        track.endPage = Math.max(introductionPage, tacticsPage - 1);
+                    } else if (track.id === 'tactics') {
+                        track.startPage = tacticsPage;
+                        track.endPage = Math.max(tacticsPage, conclusionPage - 1);
+                    } else if (track.id === 'conclusion') {
+                        track.startPage = conclusionPage;
+                        track.endPage = endPage;
                     }
                     return track;
                 });
@@ -1016,7 +1033,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 const mappedTrack = findTrackForPage(audioTracks, state.currentPage);
                 if (!mappedTrack) {
                     ui.audioTrackSelect.value = '';
-                    updateAudioStatus('No synced audio for this page. Available chapters cover the Preface and Prologue.');
+                    updateAudioStatus('No synced audio for this page.');
                     return;
                 }
                 if (mappedTrack.id !== state.currentTrackId) {
