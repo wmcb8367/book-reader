@@ -1204,20 +1204,11 @@
                 min-height: 100vh;
                 min-height: 100dvh;
                 grid-template-columns: 1fr;
-                padding: 0.5rem;
             }
 
             .sidebar,
             .reader-toolbar {
                 position: static;
-            }
-
-            .sidebar {
-                order: 2;
-            }
-
-            .reader-main {
-                order: 1;
             }
 
             .sidebar,
@@ -1227,152 +1218,63 @@
                 height: auto;
             }
 
-            .sidebar-card {
-                padding: 1rem;
-            }
-
-            .sidebar-card h1 {
-                font-size: 1.3rem;
-            }
-
-            .byline {
-                margin-bottom: 0.75rem;
-                font-size: 0.9rem;
-            }
-
             .reader-main {
                 min-height: 0;
             }
 
             .book-surface {
-                max-height: none;
-                height: auto;
-                min-height: 50vh;
-                padding: 1rem;
-                padding-bottom: calc(5rem + var(--safe-bottom));
+                max-height: calc(100vh - 15rem);
+                max-height: calc(100dvh - 15rem);
+                padding-bottom: calc(5.5rem + var(--safe-bottom));
             }
 
             .chapter-nav {
                 display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                gap: 0.5rem;
+                gap: 0.55rem;
                 max-height: none;
                 overflow-x: auto;
                 overflow-y: hidden;
-                padding-bottom: 0.5rem;
-                -webkit-overflow-scrolling: touch;
+                padding-bottom: 0.35rem;
             }
 
             .chapter-link {
                 white-space: nowrap;
-                flex-shrink: 0;
-                padding: 0.5rem 0.75rem;
-                font-size: 0.8rem;
             }
 
             .cover-splash-card {
                 width: min(100%, 21rem);
             }
-
-            /* Mobile audio panel - more compact */
-            .audio-panel {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-
-            .audio-play-btn {
-                min-width: 70px;
-            }
-
-            .audio-skip-btn {
-                min-width: 50px;
-            }
-
-            .audio-track-picker {
-                flex: 1 1 100%;
-                order: -1;
-            }
-
-            .audio-progress {
-                flex: 1 1 100%;
-            }
-
-            /* Mobile chat dock */
-            .chat-dock {
-                left: 1rem;
-                right: 1rem;
-                width: auto;
-                bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-            }
-
-            .chat-dock .chat-bubble {
-                width: 100%;
-            }
-
-            .chat-dock .chat-window {
-                width: 100%;
-                max-width: none;
-                left: 0;
-                right: 0;
-            }
         }
 
         @media (max-width: 640px) {
             body {
-                line-height: 1.65;
-                font-size: 16px;
+                line-height: 1.7;
             }
 
             .app-shell {
-                width: 100%;
-                padding: 0.5rem;
+                width: calc(100% - 0.5rem);
+                padding-top: 0.4rem;
                 padding-bottom: var(--safe-bottom);
-                gap: 0.5rem;
+                gap: 0.75rem;
             }
 
             .sidebar-card,
             .reader-toolbar,
             .book-surface {
-                border-radius: 1rem;
+                border-radius: 1.2rem;
             }
 
-            .sidebar-card {
-                padding: 0.75rem;
-            }
-
-            .sidebar-card h1 {
-                font-size: 1.1rem;
-                margin-bottom: 0.25rem;
-            }
-
-            .byline {
-                font-size: 0.85rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .eyebrow {
-                font-size: 0.7rem;
-            }
-
-            .reader-toolbar {
-                padding: 0.75rem;
+            .sidebar-card,
+            .reader-toolbar,
+            .book-surface {
+                padding: 1rem;
             }
 
             .book-surface {
-                padding: 1rem;
-                min-height: 40vh;
-                padding-bottom: calc(5rem + var(--safe-bottom));
+                max-height: calc(100vh - 14.5rem);
+                max-height: calc(100dvh - 14.5rem);
+                padding-bottom: calc(7rem + var(--safe-bottom));
             }
-
-            #content {
-                font-size: 1rem;
-                line-height: 1.7;
-            }
-
-            #content h1 { font-size: 1.5rem; }
-            #content h2 { font-size: 1.3rem; }
-            #content h3 { font-size: 1.1rem; }
 
             .page-nav,
             .audio-controls {
@@ -1524,7 +1426,7 @@
     </style>
 </head>
 <body data-cover-url="" data-book-title="Race Course Decision Making" data-book-author="William McBride">
-    <div id="coverSplash" class="cover-splash" aria-hidden="true">
+    <div id="coverSplash" class="cover-splash" aria-hidden="true" hidden>
         <div class="cover-splash-card">
             <div id="coverSplashFrame" class="cover-splash-frame">
                 <div class="cover-splash-copy">
