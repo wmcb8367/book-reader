@@ -32,10 +32,7 @@
       "level": 2,
       "approxWordPosition": 1382,
       "approxPage": 3,
-      "audio": {
-        "src": "audiobook/03-introduction-full.mp3",
-        "id": "introduction"
-      }
+      "audio": null
     },
     {
       "id": "introduction-to-race-course-decision-making",
@@ -196,10 +193,7 @@
       "level": 2,
       "approxWordPosition": 47507,
       "approxPage": 96,
-      "audio": {
-        "src": "audiobook/04-tactics-full.mp3",
-        "id": "tactics"
-      }
+      "audio": null
     },
     {
       "id": "what-are-tactics",
@@ -271,10 +265,7 @@
       "level": 2,
       "approxWordPosition": 53343,
       "approxPage": 107,
-      "audio": {
-        "src": "audiobook/05-conclusion-full.mp3",
-        "id": "conclusion"
-      }
+      "audio": null
     },
     {
       "id": "when-the-unconscious-becomes-conscious",
