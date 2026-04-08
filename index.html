@@ -2396,6 +2396,13 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
 
                 allBlocks.forEach(function(block, index) {
                     const blockWords = countWords(block.textContent);
+                    const isHeading = block.tagName === 'H2' || block.tagName === 'H3';
+                    /* Force page break before chapter headings */
+                    if (isHeading && index > startIndex && wordCount > 0) {
+                        finalizePage(index - 1);
+                        startIndex = index;
+                        wordCount = 0;
+                    }
                     const wouldOverflow = wordCount > 0 && wordCount + blockWords > wordsPerPage;
                     if (wouldOverflow && index > startIndex) {
                         finalizePage(index - 1);
