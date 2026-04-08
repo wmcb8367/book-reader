@@ -1412,6 +1412,20 @@
                 gap: 0.6rem;
             }
 
+            /* Audio scrubber sits between page-nav and mini-player */
+            .mobile-audio-scrubber {
+                display: block;
+                width: 100%;
+                accent-color: var(--accent);
+                height: 1rem;
+                margin: -0.15rem 0;
+            }
+
+            .mobile-audio-scrubber::-webkit-slider-runnable-track {
+                height: 0.35rem;
+                border-radius: 999px;
+            }
+
             .page-actions {
                 display: inline-flex;
                 justify-content: flex-end;
@@ -1449,7 +1463,7 @@
                 display: none;
             }
 
-            /* Hide the book progress bar on mobile — audio scrubber replaces it */
+            /* Replace book progress bar with audio scrubber on mobile */
             .reader-progress {
                 display: none;
             }
@@ -1463,14 +1477,7 @@
                 flex-direction: column;
             }
 
-            /* Move audio scrubber above mini-player row */
-            .audio-panel > .audio-row--progress {
-                order: -2;
-            }
 
-            .audio-panel > .audio-mini-row {
-                order: -1;
-            }
 
             .audio-mini-row {
                 display: grid;
@@ -1560,16 +1567,15 @@
                 display: block !important;
             }
 
-            /* Progress bar always visible */
-            .audio-panel > .audio-row--progress {
+            /* Hide full progress row when collapsed — mobile scrubber clone replaces it */
+            .audio-panel:not(.audio-panel--expanded) > .audio-row--progress {
+                display: none !important;
+            }
+
+            .audio-panel.audio-panel--expanded > .audio-row--progress {
                 display: grid;
                 grid-template-columns: minmax(0, 1fr);
                 gap: 0.45rem;
-            }
-
-            .audio-panel:not(.audio-panel--expanded) > .audio-row--progress .audio-track-picker,
-            .audio-panel:not(.audio-panel--expanded) > .audio-row--progress .audio-time {
-                display: none;
             }
 
             /* --- Full-height book surface --- */
@@ -3763,6 +3769,37 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 closeDrawer();
             }
         });
+
+        /* Mobile: clone audio scrubber into toolbar between page-nav and audio-panel */
+        if (mq.matches) {
+            var pageNav = document.querySelector('.page-nav');
+            var originalProgress = document.getElementById('audioProgress');
+            if (pageNav && originalProgress) {
+                var mobileScrubber = document.createElement('input');
+                mobileScrubber.type = 'range';
+                mobileScrubber.min = '0';
+                mobileScrubber.max = '100';
+                mobileScrubber.value = '0';
+                mobileScrubber.step = '0.1';
+                mobileScrubber.className = 'mobile-audio-scrubber';
+                mobileScrubber.setAttribute('aria-label', 'Audio progress');
+                pageNav.parentNode.insertBefore(mobileScrubber, pageNav.nextSibling);
+
+                /* Sync mobile scrubber with original */
+                mobileScrubber.addEventListener('input', function() {
+                    originalProgress.value = mobileScrubber.value;
+                    originalProgress.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+
+                /* Sync original back to mobile */
+                var syncTimer = null;
+                function syncMobileScrubber() {
+                    mobileScrubber.value = originalProgress.value;
+                    syncTimer = requestAnimationFrame(syncMobileScrubber);
+                }
+                syncMobileScrubber();
+            }
+        }
 
         /* Audio expand toggle */
         if (audioExpandToggle && audioPanel) {
