@@ -222,13 +222,14 @@
 
         .sidebar-card {
             height: auto;
-            max-height: calc(100vh - 10rem);
+            max-height: calc(100vh - 11rem);
             min-height: 0;
             padding: 1.25rem;
             border-radius: 1.5rem;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            margin-bottom: 0.75rem;
         }
 
         .sidebar-chat {
@@ -646,14 +647,14 @@
 
         .chat-dock {
             position: fixed;
-            left: calc((100vw - min(1380px, calc(100% - 2rem))) / 2 + 1.25rem);
+            left: calc((100vw - min(1380px, calc(100% - 2rem))) / 2 + 1rem);
             bottom: 1rem;
             z-index: 40;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             gap: 0.5rem;
-            width: calc(min(290px, 22vw) - 2.5rem);
+            width: calc(min(290px, 22vw));
             box-sizing: border-box;
         }
 
@@ -665,8 +666,9 @@
             width: 100%;
             justify-content: space-between;
             font-size: 0.8rem;
-            padding: 0.5rem 0.75rem;
-            min-height: 40px;
+            padding: 0.75rem 1rem;
+            min-height: 44px;
+            border-radius: 1rem;
         }
 
         .chat-dock .chat-bubble-icon {
