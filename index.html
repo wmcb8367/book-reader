@@ -2193,6 +2193,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 return;
             }
             state.pages = buildPages(blocks);
+            window.__readerPages = state.pages; /* expose for pageFromAudioProgress */
             /* Page-flip: hide all blocks initially, showPage() reveals current page */
             blocks.forEach(function(block) { block.style.display = 'none'; });
             console.log('[pagination-debug] state.pages.length:', state.pages.length);
@@ -2597,10 +2598,16 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                     marker.id = 'page-' + (pages.length + 1);
                     marker.dataset.page = String(pages.length + 1);
                     allBlocks[startIndex].before(marker);
+                    /* Count words for this page */
+                    var pageWords = 0;
+                    for (var wi = startIndex; wi <= endIndex; wi++) {
+                        pageWords += countWords(allBlocks[wi].textContent);
+                    }
                     pages.push({
                         number: pages.length + 1,
                         startIndex: startIndex,
                         endIndex: endIndex,
+                        wordCount: pageWords,
                         marker: marker,
                         chapterTitle: '',
                         sectionTitle: '',
@@ -3588,9 +3595,29 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
             if (!track || !audioElement || !Number.isFinite(audioElement.duration) || audioElement.duration <= 0) {
                 return null;
             }
-            const progress = Math.min(Math.max(audioElement.currentTime / audioElement.duration, 0), 1);
-            const span = Math.max(0, track.endPage - track.startPage);
-            return clampPage(track.startPage + Math.round(progress * span), track.endPage);
+            var progress = Math.min(Math.max(audioElement.currentTime / audioElement.duration, 0), 1);
+            /* Weight by word count so short pages (headings, images) don't eat audio time */
+            var pages = window.__readerPages;
+            if (!pages || track.startPage > pages.length) {
+                var span = Math.max(0, track.endPage - track.startPage);
+                return clampPage(track.startPage + Math.round(progress * span), track.endPage);
+            }
+            /* Build cumulative word weights for this track's page range */
+            var totalWords = 0;
+            var pageStart = track.startPage - 1; /* 0-indexed */
+            var pageEnd = Math.min(track.endPage, pages.length) - 1;
+            for (var i = pageStart; i <= pageEnd; i++) {
+                totalWords += (pages[i].wordCount || 1);
+            }
+            var targetWords = progress * totalWords;
+            var cumulative = 0;
+            for (var j = pageStart; j <= pageEnd; j++) {
+                cumulative += (pages[j].wordCount || 1);
+                if (cumulative >= targetWords) {
+                    return pages[j].number;
+                }
+            }
+            return track.endPage;
         }
 
         function chapterForPage(chapters, pageNumber) {
