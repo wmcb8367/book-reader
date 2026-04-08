@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Course Decision Making - Interactive Reader</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.7; color: #1a1a1a; background: #ffffff; }
+        .header { background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: white; padding: 2rem; text-align: center; border-bottom: 4px solid #003366; }
+        .header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .container { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+        .controls { background: #f6f8fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        button { padding: 0.75rem 1.5rem; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+        button:hover { background: #0052a3; }
+        #content { font-size: 1.1rem; }
+        #content h1 { font-size: 2em; margin: 1.5em 0 0.5em 0; color: #0066cc; }
+        #content h2 { font-size: 1.5em; margin: 1.3em 0 0.4em 0; color: #004499; }
+        #content p { margin: 1em 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Race Course Decision Making</h1>
+        <p>By William McBride - Interactive Reader</p>
+    </div>
+    
+    <div class="container">
+        <div class="controls">
+            <button onclick="scrollUp()">Scroll Up</button>
+            <button onclick="scrollDown()">Scroll Down</button>
+            <button onclick="scrollToTop()">Top of Book</button>
+        </div>
+        <div id="content">Loading book...</div>
+    </div>
+    
+    <script>
+        function scrollUp() { window.scrollBy({ top: -300, behavior: 'smooth' }); }
+        function scrollDown() { window.scrollBy({ top: 300, behavior: 'smooth' }); }
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        
+        // Book content embedded directly
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookContent = `
+            `;
+            
+            if (bookContent && bookContent.length > 100) {
+                document.getElementById('content').innerHTML = bookContent;
+            } else {
+                document.getElementById('content').innerHTML = '<p style="color: red;">Could not load book content</p>';
+            }
+        });
+    </script>
+</body>
+</html>

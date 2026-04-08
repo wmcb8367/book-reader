@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Course Decision Making</title>
+    <style>
+        body { font-family: Georgia, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 2rem; }
+        h1, h2, h3 { color: #0066cc; }
+        p { margin: 1em 0; }
+        .controls { background: #f6f8fa; padding: 1rem; margin-bottom: 2rem; border-radius: 6px; }
+        button { padding: 0.5rem 1rem; margin-right: 0.5rem; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0052a3; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h1>Race Course Decision Making</h1>
+        <p><em>Interactive Reader by William McBride</em></p>
+    </div>
+    
+    <div id="content"></div>
+    
+    <script>
+        // Book content
+        const BOOK_HTML = "EOFHTML
+
+# Add the actual book HTML (first 20KB for testing)
+grep "window.BOOK_HTML =" ~/.openclaw/workspace/projects/book-reader/index-duplicates.html | sed 's/window.BOOK_HTML = //;s/;$//' | head -c 50000 >> index-simple.html
+
+cat >> index-simple.html << 'EOFHTML'
+        
+        // Simple display
+        document.getElementById('content').innerHTML = BOOK_HTML;
+    </script>
+</body>
+</html>
