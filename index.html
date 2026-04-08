@@ -504,23 +504,49 @@
         }
 
         .audio-play-btn {
-            min-width: 60px;
-            min-height: 36px;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.85rem;
-            font-weight: 700;
+            min-width: 44px;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            font-size: 1.2rem;
+            font-weight: 400;
             background: linear-gradient(135deg, var(--accent), #1991a8);
             color: #fff;
             border-color: transparent;
-            box-shadow: 0 8px 16px rgba(11, 114, 133, 0.18);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(11, 114, 133, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 150ms ease, box-shadow 150ms ease;
+        }
+
+        .audio-play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(11, 114, 133, 0.35);
+        }
+
+        .audio-play-btn:active {
+            transform: scale(0.95);
         }
 
         .audio-skip-btn {
-            min-width: 50px;
-            min-height: 36px;
-            padding: 0.35rem 0.6rem;
-            font-weight: 600;
-            font-size: 0.8rem;
+            min-width: 36px;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            font-size: 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            transition: background 150ms ease, transform 150ms ease;
+        }
+
+        .audio-skip-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
         }
 
         .audio-track-picker {
@@ -1499,9 +1525,9 @@
                         </label>
                     </div>
                     <div class="audio-row audio-row--controls">
-                        <button id="prevTrackBtn" class="audio-skip-btn" type="button" aria-label="Previous chapter">Prev</button>
-                        <button id="playPauseBtn" class="audio-play-btn" type="button" aria-label="Play or pause audio">Play</button>
-                        <button id="nextTrackBtn" class="audio-skip-btn" type="button" aria-label="Next chapter">Next</button>
+                        <button id="prevTrackBtn" class="audio-skip-btn" type="button" aria-label="Previous chapter">⏮</button>
+                        <button id="playPauseBtn" class="audio-play-btn" type="button" aria-label="Play or pause audio" data-playing="false">▶</button>
+                        <button id="nextTrackBtn" class="audio-skip-btn" type="button" aria-label="Next chapter">⏭</button>
                     </div>
                     <div class="audio-row audio-row--progress">
                         <label class="audio-track-picker" for="audioTrackSelect">
@@ -2321,8 +2347,9 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 }) : -1;
                 ui.audioProgress.value = String(progress);
                 ui.audioTime.textContent = formatTime(currentTime) + ' / ' + formatTime(duration);
-                ui.playPauseBtn.textContent = ui.audioElement.paused ? 'Play' : 'Pause';
+                ui.playPauseBtn.textContent = ui.audioElement.paused ? '\u25b6' : '\u23f8';
                 ui.playPauseBtn.setAttribute('aria-label', ui.audioElement.paused ? 'Play audio' : 'Pause audio');
+                ui.playPauseBtn.setAttribute('data-playing', ui.audioElement.paused ? 'false' : 'true');
                 ui.prevTrackBtn.disabled = trackIndex <= 0;
                 ui.nextTrackBtn.disabled = trackIndex === -1 || trackIndex >= audioTracks.length - 1;
                 ui.audioNowPlaying.textContent = activeTrack ? activeTrack.title : 'Ready to play';
