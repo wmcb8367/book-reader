@@ -1435,10 +1435,10 @@
                 <div class="cover-splash-copy">
                     <p class="eyebrow">Interactive Reader</p>
                     <h1 id="coverSplashTitle" class="cover-splash-title">Race Course Decision Making</h1>
-                    <p id="coverSplashAuthor" class="cover-splash-author">By William McBride</p>
+                    <p id="coverSplashAuthor" class="cover-splash-author">By Willie McBride</p>
                 </div>
             </div>
-            <p class="cover-splash-note">Opening book</p>
+
         </div>
     </div>
 
@@ -1583,7 +1583,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
         ];
 
         const SPLASH_STORAGE_KEY = 'race-course-reader-splash-v2';
-        const SPLASH_DISPLAY_MS = 1000;
+        const SPLASH_DISPLAY_MS = 2000;
         const SPLASH_FADE_MS = 500;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1666,7 +1666,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 chatCloseTimer: null
             };
             const bookTitle = (document.body.dataset.bookTitle || 'Race Course Decision Making').trim();
-            const bookAuthor = (document.body.dataset.bookAuthor || 'William McBride').trim();
+            const bookAuthor = (document.body.dataset.bookAuthor || 'Willie McBride').trim();
             const coverUrl = (document.body.dataset.coverUrl || '').trim();
 
             ui.audioElement.playsInline = true;
@@ -2843,7 +2843,7 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
 
             const coverUrl = (body.dataset.coverUrl || '').trim();
             const bookTitle = (body.dataset.bookTitle || title.textContent || 'Race Course Decision Making').trim();
-            const bookAuthor = (body.dataset.bookAuthor || author.textContent.replace(/^By\s+/i, '') || 'William McBride').trim();
+            const bookAuthor = (body.dataset.bookAuthor || author.textContent.replace(/^By\s+/i, '') || 'Willie McBride').trim();
             const shouldSkip = readSplashPreference();
 
             title.textContent = bookTitle;
