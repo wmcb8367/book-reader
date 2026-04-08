@@ -151,15 +151,16 @@
             width: min(100%, 32rem);
             padding: clamp(2rem, 5vw, 3rem);
             border-radius: 1.5rem;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             text-align: center;
         }
 
         .cover-splash-frame {
-            display: none;
+            display: block;
         }
 
         .cover-splash-frame img {
@@ -174,22 +175,24 @@
 
         .cover-splash-copy .eyebrow {
             margin-bottom: 0;
-            color: var(--muted);
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .cover-splash-title {
             margin: 0;
             font-size: clamp(2rem, 5vw, 3rem);
             line-height: 1.1;
-            color: var(--ink);
-            font-weight: 500;
+            color: #fff;
+            font-weight: 600;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
         }
 
         .cover-splash-author {
             margin: 0;
-            color: var(--muted);
+            color: rgba(255, 255, 255, 0.95);
             font-style: italic;
             font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
         }
 
         .cover-splash-note {
@@ -222,14 +225,14 @@
 
         .sidebar-card {
             height: auto;
-            max-height: calc(100vh - 11rem);
+            max-height: calc(100vh - 8rem);
             min-height: 0;
             padding: 1.25rem;
             border-radius: 1.5rem;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0;
         }
 
         .sidebar-chat {
@@ -648,7 +651,7 @@
         .chat-dock {
             position: fixed;
             left: calc((100vw - min(1380px, calc(100% - 2rem))) / 2);
-            bottom: 1rem;
+            bottom: 0.75rem;
             z-index: 40;
             display: flex;
             flex-direction: column;
