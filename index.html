@@ -2553,8 +2553,16 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 allBlocks.forEach(function(block, index) {
                     const blockWords = countWords(block.textContent);
                     const isHeading = block.tagName === 'H2' || block.tagName === 'H3';
+                    const hasImage = block.tagName === 'P' && block.querySelector('img');
+                    const isImage = block.tagName === 'IMG';
                     /* Force page break before chapter headings */
                     if (isHeading && index > startIndex && wordCount > 0) {
+                        finalizePage(index - 1);
+                        startIndex = index;
+                        wordCount = 0;
+                    }
+                    /* Force page break before images/figures if page already has content */
+                    if ((hasImage || isImage) && wordCount > 0 && index > startIndex) {
                         finalizePage(index - 1);
                         startIndex = index;
                         wordCount = 0;
