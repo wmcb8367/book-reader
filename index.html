@@ -659,7 +659,7 @@
 
         .book-surface #content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: auto; /* allows scroll if single page overflows */
         }
 
         #content {
@@ -2078,6 +2078,8 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 return;
             }
             state.pages = buildPages(blocks);
+            /* Page-flip: hide all blocks initially, showPage() reveals current page */
+            blocks.forEach(function(block) { block.style.display = 'none'; });
             console.log('[pagination-debug] state.pages.length:', state.pages.length);
             console.log('[pagination-debug] allBlocks.length:', blocks.length);
             console.log('[pagination-debug] WORDS_PER_PAGE:', wordsPerPage);
@@ -2177,25 +2179,53 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 }
             });
 
-            ui.bookSurface.addEventListener('scroll', function() {
-                if (state.scrollRaf) {
-                    return;
-                }
-                state.scrollRaf = window.requestAnimationFrame(function() {
-                    state.scrollRaf = null;
-                    const userDrivenScroll = !isProgrammaticScrollActive(state);
-                    if (userDrivenScroll && !ui.audioElement.paused) {
-                        state.autoScrollStoppedByUser = true;
+            /* Page-flip mode: swipe and tap gestures */
+            (function setupPageFlipGestures() {
+                var touchStartX = 0;
+                var touchStartY = 0;
+                var touchStartTime = 0;
+                var minSwipeDist = 50;
+                var maxSwipeTime = 500;
+
+                ui.bookSurface.addEventListener('touchstart', function(e) {
+                    var touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    touchStartTime = Date.now();
+                }, { passive: true });
+
+                ui.bookSurface.addEventListener('touchend', function(e) {
+                    var touch = e.changedTouches[0];
+                    var dx = touch.clientX - touchStartX;
+                    var dy = touch.clientY - touchStartY;
+                    var dt = Date.now() - touchStartTime;
+                    /* Must be horizontal swipe, not vertical scroll */
+                    if (dt < maxSwipeTime && Math.abs(dx) > minSwipeDist && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                        if (dx < 0) {
+                            /* Swipe left → next page */
+                            goToPage(state.currentPage + 1, false, { source: 'swipe' });
+                        } else {
+                            /* Swipe right → prev page */
+                            goToPage(state.currentPage - 1, false, { source: 'swipe' });
+                        }
                     }
-                    const scrollPage = pageFromScroll(state.pages, ui.bookSurface);
-                    if (scrollPage !== state.currentPage) {
-                        setCurrentPage(scrollPage, {
-                            source: userDrivenScroll ? 'manual-scroll' : 'programmatic-scroll',
-                            skipAudioSync: userDrivenScroll && !ui.audioElement.paused
-                        });
+                }, { passive: true });
+
+                /* Tap zones: left third = prev, right third = next (touch only) */
+                ui.bookSurface.addEventListener('click', function(e) {
+                    if (!window.matchMedia('(pointer: coarse)').matches) return;
+                    /* Don't intercept taps on links, buttons, selects */
+                    if (e.target.closest('a, button, select, input, .chat-dock')) return;
+                    var rect = ui.bookSurface.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var third = rect.width / 3;
+                    if (x < third) {
+                        goToPage(state.currentPage - 1, false, { source: 'tap' });
+                    } else if (x > third * 2) {
+                        goToPage(state.currentPage + 1, false, { source: 'tap' });
                     }
                 });
-            }, { passive: true });
+            })();
 
             window.addEventListener('resize', function() {
                 updatePageUI();
@@ -2544,12 +2574,25 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
             }
 
             function jumpToPage(pageNumber, smooth, options) {
+                showPage(pageNumber);
+            }
+
+            function showPage(pageNumber) {
                 const page = state.pages[pageNumber - 1];
-                if (!page) {
-                    return;
+                if (!page) return;
+                /* Hide all blocks */
+                blocks.forEach(function(block) {
+                    block.style.display = 'none';
+                });
+                /* Also hide page markers */
+                var markers = ui.content.querySelectorAll('.page-marker');
+                markers.forEach(function(m) { m.style.display = 'none'; });
+                /* Show blocks for this page */
+                for (var i = page.startIndex; i <= page.endIndex; i++) {
+                    if (blocks[i]) blocks[i].style.display = '';
                 }
-                const target = (options && options.preferredAnchor) || page.scrollTarget || page.marker;
-                scrollElementIntoSurface(target, ui.bookSurface, smooth, state);
+                /* Scroll surface to top */
+                ui.bookSurface.scrollTop = 0;
             }
 
             function setCurrentPage(pageNumber, options) {
@@ -2636,21 +2679,12 @@ window.BOOK_HTML = "<h1>Race Course Decision Making</h1><h2>2025 Edition</h2><h3
                 if (!targetPage) {
                     return;
                 }
-                const page = state.pages[targetPage - 1];
-                if (!page) {
-                    return;
-                }
                 if (targetPage !== state.currentPage) {
                     setCurrentPage(targetPage, {
                         source: 'audio-timeupdate',
                         skipAudioSync: true
                     });
-                }
-                if (isProgrammaticScrollActive(state) && state.lastAudioDrivenPage === targetPage) {
-                    return;
-                }
-                if (!isElementVisibleWithinSurface(page.scrollTarget, ui.bookSurface) || state.lastAudioDrivenPage !== targetPage) {
-                    jumpToPage(targetPage, smooth, { source: 'audio-timeupdate' });
+                    showPage(targetPage);
                 }
                 state.lastAudioDrivenPage = targetPage;
             }
